@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  # Node.js App
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Exposes the app on port 8080
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/mydatabase
+    networks:
+      - app-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+# Volumes
+volumes:
+  pgdata:
+
+# Networks
+networks:
+  app-network:
